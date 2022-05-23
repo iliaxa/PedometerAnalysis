@@ -23,5 +23,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        DataContext = new ApplicationViewModel(); }
+        DataContext = new ApplicationViewModel();
+        
+        
+    }
 }
