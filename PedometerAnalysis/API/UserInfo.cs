@@ -10,5 +10,8 @@ internal class UserInfo
     public int Rank { get; set; }
     public string User { get; set; }
     public string Status { get; set; }
-    public int Steps { get; set; }
+    public int[] Steps { get; set; }
+    public double Average { get; set; }
+    public int Max { get; set; }
+    public int Min { get; set; }
 }

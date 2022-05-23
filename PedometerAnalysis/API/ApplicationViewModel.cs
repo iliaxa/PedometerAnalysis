@@ -1,35 +1,66 @@
 ﻿using OxyPlot;
 using OxyPlot.Series;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 namespace PedometerAnalysis.API;
 internal class ApplicationViewModel
 {
     private UserInfo selectedUser;
-
+    private RelayCommand selectionChangedCommand;
     public List<UserInfo> Users { get; set; }
     public UserInfo SelectedUser
     {
         get { return selectedUser; }
-        set { selectedUser = value; }
+        set 
+        {
+            selectedUser = value;
+            GrapthMethod();
+        }
     }
     public ApplicationViewModel()
     {
-        Users = JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day1.json").ToList();
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day3.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day4.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day5.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day6.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day7.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day8.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day9.json"));
-        Users.AddRange(JSONParser.Parse(@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day10.json"));
-
+        Users = JSONParser.Parse(new string[] {@"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day1.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day3.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day4.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day5.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day6.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day7.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day8.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day9.json",
+            @"D:\Projects\Pedometer\PedometerAnalysis\PedometerAnalysis\Data\day10.json" }).ToList();
+        SelectedUser = Users.First();
         GrapthMethod();
+
+        FillGrid();
     }
-    public PlotModel MyModel { get; private set; }
+
+    public RelayCommand SelectionChangedCommand
+    {
+        get
+        {
+            return selectionChangedCommand ??= new RelayCommand(obj =>
+                {
+                    GrapthMethod();
+                });
+        }
+    }
+
+    private void FillGrid()
+    {
+        for (int i = 0; i < Users.Count; i++)
+        {
+            Users[i].Average = Math.Round(Users[i].Steps.Average());
+            Users[i].Min = Users[i].Steps.Min();
+            Users[i].Max = Users[i].Steps.Max();
+        }
+    }
+
+    public PlotModel MyModel { get; set; }
     public void GrapthMethod()
     {
+        if (selectedUser == null)
+            return;
         var temp = new PlotModel
         {
             Title = "Pedometer",
@@ -41,19 +72,29 @@ internal class ApplicationViewModel
             Color = OxyColors.Red,
             StrokeThickness = 2
         };
-        var s = Users.GroupBy(x => x.User)
-            .Select(c => new 
-            {
-                User = c.Key,
-                Count = c.Count(),
-                Steps = c.Select(z => z.Steps) 
-            }).ToList();
-        for (int i = 0; i < s[0].Steps.Count(); i++)
+
+        for (int i = 0; i < selectedUser.Steps.Length; i++)
         {
-            var list = s[0].Steps.ToList();
-            series1.Points.Add(new DataPoint(i + 1, list[i]));
+            series1.Points.Add(new DataPoint(i + 1, selectedUser.Steps[i]));
         }
+        var series2 = new LineSeries
+        {
+            Title = "Series2",
+            Color = OxyColors.Blue,
+            StrokeThickness = 3
+        };
+
+        //int Element = selectedUser.Steps.Min();
+        //int Index = selectedUser.Steps.Where(c => c == Element).First();
+        //series2.Points.Add(new DataPoint(Index, Element));
+
+        //Element = selectedUser.Steps.Max();
+        //Index = selectedUser.Steps.Where(c => c == Element).First();
+        //series2.Points.Add(new DataPoint(Index, Element));
+
         temp.Series.Add(series1);
+        temp.Series.Add(series2);
+
         this.MyModel = temp;
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PedometerAnalysis.API;
-internal class Status
+internal interface ICommand
 {
-    [Key] public int ID { get; set; }
-    [Required] public string Name { get; set; }
+    event EventHandler CanExecuteChanged;
+    void Execute(object parameter);
+    bool CanExecute(object parameter);
 }
