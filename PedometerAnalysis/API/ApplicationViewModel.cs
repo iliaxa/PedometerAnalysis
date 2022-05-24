@@ -1,12 +1,12 @@
-﻿using System;
-using System.Linq;
-using System.ComponentModel;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
-using OxyPlot;
+﻿using OxyPlot;
 using OxyPlot.Series;
 using PedometerAnalysis.API.Export;
 using PedometerAnalysis.API.Extensions;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
 namespace PedometerAnalysis.API;
 internal class ApplicationViewModel : INotifyPropertyChanged
 {
@@ -59,6 +59,7 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                 {
                     var openFileDialog = new Microsoft.Win32.OpenFileDialog
                     {
+                        InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
                         Multiselect = true,
                         Filter = "JSON files (*.json)|*.json"
                     };
@@ -67,7 +68,7 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                         Users.Clear();
                         Users.AddRange(JSONParser.Parse(openFileDialog.FileNames));
                         SelectedUser = Users.First();
-                        FillGrid(); 
+                        FillGrid();
                         Chart.UpdateChart(MyModel, SelectedUser, lineSeries, scatterSeries);
                     }
                 });
@@ -80,19 +81,15 @@ internal class ApplicationViewModel : INotifyPropertyChanged
             return exportCommand ??= new RelayCommand(obj =>
                 {
                     IExport exporter;
-                    if (obj is JSONExporter)
-                        exporter = obj as JSONExporter;
-                    else if (obj is CSVExporter)
-                        exporter = obj as CSVExporter;
-                    else if (obj is XMLExporter)
-                        exporter = obj as XMLExporter;
-                    else return;
-                    ExportSevice sevice = new ExportSevice(exporter);
                     var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                     {
-                        InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
-                        Filter = "JSON files (*.json)|*.json|CSV files (*.csv)|*.csv|XML files (*.xml)|*.xml"
+                        InitialDirectory = AppDomain.CurrentDomain.BaseDirectory
                     };
+                    if (obj is JSONExporter)  { exporter = obj as JSONExporter; saveFileDialog.Filter = "JSON files (*.json)"; }
+                    else if (obj is CSVExporter) { exporter = obj as CSVExporter; saveFileDialog.Filter = "CSV files (*.csv)"; }
+                    else if (obj is XMLExporter) { exporter = obj as XMLExporter; saveFileDialog.Filter = "XML files (*.xml)"; }
+                    else { return; }
+                    ExportSevice sevice = new ExportSevice(exporter);
                     if (saveFileDialog.ShowDialog() == true)
                     {
                         sevice.Export(saveFileDialog.FileName, Users);
