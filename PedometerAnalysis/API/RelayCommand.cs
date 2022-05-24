@@ -18,10 +18,7 @@ internal class RelayCommand : ICommand
         _canExecute = canExecute;
     }
 
-    public bool CanExecute(object parameter)
-    {
-        return _canExecute == null ? true : _canExecute(parameter);
-    }
+    public bool CanExecute(object parameter) => _canExecute == null ? true : _canExecute(parameter);
 
     public event EventHandler CanExecuteChanged
     {
@@ -31,6 +28,6 @@ internal class RelayCommand : ICommand
 
     public void Execute(object parameter)
     {
-        _execute(parameter);
+        this._execute(parameter);
     }
 }

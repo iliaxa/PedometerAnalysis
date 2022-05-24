@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:PedometerAnalysis.Forms"
+        xmlns:local="clr-namespace:PedometerAnalysis.API"
         mc:Ignorable="d"
         xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         Title="MainWindow" Height="720" Width="1280">
@@ -27,7 +27,7 @@
             <RowDefinition Height="200" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ListBox Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" ItemsSource="{Binding Users}" SelectionChanged="ListBox_SelectionChanged" SelectedItem="{Binding SelectedUser}">
+        <ListBox Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
                     <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" />
@@ -44,7 +44,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedUser}">
+        <StackPanel Grid.Row="0" Grid.Column="1">
             <TextBlock Text="Выбранный элемент"  />
             <TextBlock Text="Модель" />
             <TextBox Text="{Binding User}" />
@@ -53,10 +53,10 @@
             <TextBlock Text="Цена" />
             <TextBox Text="{Binding Average}" />
         </StackPanel>
-        <GroupBox Grid.Column="1" Grid.Row="1" BorderBrush="Aqua" BorderThickness="1">
+        <GroupBox Grid.Column="1" Width="auto" Height="auto" Grid.Row="1" BorderBrush="Aqua" BorderThickness="1">
             <StackPanel>
-                <Button Height="20" Width="100" Content="Knopka" Command="{Binding SelectionChangedCommand}" ></Button>
-            <oxy:PlotView  Model="{Binding MyModel}" Width="auto" Height="300"></oxy:PlotView>
+                <Button x:Name="openfilebutton" Height="20" Width="100"  Command="{Binding Path=OpenFileCommand}" CommandParameter="null" ></Button>
+                <oxy:PlotView x:Name="chart" Background="Aquamarine" Height="400" Model="{Binding MyModel}" />
             </StackPanel>
         </GroupBox>
     </Grid>
