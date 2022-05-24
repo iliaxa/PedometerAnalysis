@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace PedometerAnalysis.API.Export;
 internal interface IExport
 {
-    void Export(List<UserInfo> infos);
+    void Export(string path, IEnumerable<UserInfo> infos);
 }

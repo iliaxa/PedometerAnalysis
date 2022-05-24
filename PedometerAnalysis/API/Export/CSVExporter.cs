@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PedometerAnalysis.API.Export;
-internal class CSVExport : IExport
+internal class CSVExporter : IExport
 {
-    public void Export(List<UserInfo> steps)
+    public void Export(string path, IEnumerable<UserInfo> infos)
     {
         throw new NotImplementedException();
     }

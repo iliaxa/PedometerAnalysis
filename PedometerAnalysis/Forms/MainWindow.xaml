@@ -5,18 +5,16 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PedometerAnalysis.API"
+        xmlns:local2="clr-namespace:PedometerAnalysis.API.Export"
         mc:Ignorable="d"
         xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         Title="MainWindow" Height="720" Width="1280">
     <Window.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="CadetBlue" />
+        <Style TargetType="DataGrid">
+            <Setter Property="ColumnWidth" Value="*"/>
         </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="Aqua" />
-        </Style>
+        <local:RowToBrushConverter x:Key="RowToBrushConverter" />
+        <local2:JSONExporter x:Key="JSONExport" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -27,13 +25,54 @@
             <RowDefinition Height="200" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ListBox Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
+        <DataGrid  Name="UserInfoDataGrid" SelectionUnit="FullRow" Grid.Column="0" Grid.RowSpan="2" Grid.Row="0" Foreground="#329A93" SelectionMode="Single" IsReadOnly="True" FontSize="15" HorizontalScrollBarVisibility="Disabled" CanUserAddRows="False" CanUserResizeColumns="False" CanUserDeleteRows="False" ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}" AutoGenerateColumns="False">
+            <DataGrid.CellStyle>
+                <Style>
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+                    <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                    <Style.Triggers>
+                        <MultiTrigger>
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </MultiTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{Binding Converter={StaticResource RowToBrushConverter}}" />
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="100*" Binding="{Binding User}" Header="ФИО"/>
+                <DataGridTextColumn Binding="{Binding Average}" Header="Среднее количество шагов в день"/>
+                <DataGridTextColumn Binding="{Binding Max}" Header="Лучший результат"/>
+                <DataGridTextColumn Width="100*" Binding="{Binding Path=Min}" Header="Худший результат"/>
+            </DataGrid.Columns>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectionChanged">
                     <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <ListBox.ItemTemplate>
+            <!--<DataGrid.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="0.8*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding User}" />
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Average}" />
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Max}" />
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Min}" />
+                    </Grid>
+                </DataTemplate>
+            </DataGrid.ItemTemplate>-->
+            <!--<ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="5">
                         <TextBlock FontSize="18" Text="{Binding User}" />
@@ -42,9 +81,9 @@
                         <TextBlock Text="{Binding Min}" />
                     </StackPanel>
                 </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <StackPanel Grid.Row="0" Grid.Column="1">
+            </ListBox.ItemTemplate>-->
+        </DataGrid>
+        <!--<StackPanel Grid.Row="0" Grid.Column="1">
             <TextBlock Text="Выбранный элемент"  />
             <TextBlock Text="Модель" />
             <TextBox Text="{Binding User}" />
@@ -52,7 +91,7 @@
             <TextBox Text="{Binding Rank}" />
             <TextBlock Text="Цена" />
             <TextBox Text="{Binding Average}" />
-        </StackPanel>
+        </StackPanel>-->
         <GroupBox Grid.Column="1" Width="auto" Height="auto" Grid.Row="1" BorderBrush="Aqua" BorderThickness="1">
             <StackPanel>
                 <Button x:Name="openfilebutton" Height="20" Width="100"  Command="{Binding Path=OpenFileCommand}" CommandParameter="null" ></Button>
