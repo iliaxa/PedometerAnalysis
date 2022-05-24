@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace PedometerAnalysis.API;
-internal class UserInfo : INotifyPropertyChanged
+
+[DataContract]
+public class UserInfo : INotifyPropertyChanged
 {
     private int rank;
     private int[] steps;
@@ -18,15 +15,17 @@ internal class UserInfo : INotifyPropertyChanged
     private int min;
     private int max;
     
-    public int Rank { 
+    [DataMember]
+    public int Rank {
         get { return rank; }
         set
         {
             rank = value;
             OnPropertyChanged();
         }
-            
+
     }
+    [DataMember]
     public string User
     {
         get { return user; }
@@ -36,6 +35,7 @@ internal class UserInfo : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    [DataMember]
     public string Status
     {
         get { return status; }
@@ -54,6 +54,7 @@ internal class UserInfo : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    [DataMember]
     public double Average
     {
         get { return average; }
@@ -63,6 +64,7 @@ internal class UserInfo : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    [DataMember]
     public int Max
     {
         get { return max; }
@@ -72,6 +74,7 @@ internal class UserInfo : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+    [DataMember]
     public int Min
     {
         get { return min; }

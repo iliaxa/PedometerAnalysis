@@ -111,7 +111,8 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                     ExportSevice sevice = new ExportSevice(exporter);
                     var saveFileDialog = new Microsoft.Win32.SaveFileDialog
                     {
-                        InitialDirectory = AppDomain.CurrentDomain.BaseDirectory
+                        InitialDirectory = AppDomain.CurrentDomain.BaseDirectory,
+                        Filter = "JSON files (*.json)|*.json|CSV files (*.csv)|*.csv|XML files (*.xml)|*.xml"
                     };
                     if (saveFileDialog.ShowDialog() == true)
                     {

@@ -15,6 +15,8 @@
         </Style>
         <local:RowToBrushConverter x:Key="RowToBrushConverter" />
         <local2:JSONExporter x:Key="JSONExport" />
+        <local2:CSVExporter x:Key="CSVExport" />
+        <local2:XMLExporter x:Key="XMLExport" />
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -96,6 +98,9 @@
             <StackPanel>
                 <Button x:Name="openfilebutton" Height="20" Width="100"  Command="{Binding Path=OpenFileCommand}" CommandParameter="null" ></Button>
                 <oxy:PlotView x:Name="chart" Background="Aquamarine" Height="400" Model="{Binding MyModel}" />
+                <Button x:Name="exportToJsonButton" Height="20" Width="100"  Command="{Binding Path=ExportCommand}" CommandParameter="{Binding Source={StaticResource JSONExport}}" >JSON</Button>
+                <Button x:Name="exportToCSVButton" Height="20" Width="100"  Command="{Binding Path=ExportCommand}" CommandParameter="{Binding Source={StaticResource CSVExport}}" >CSV</Button>
+                <Button x:Name="exportToXMLButton" Height="20" Width="100"  Command="{Binding Path=ExportCommand}" CommandParameter="{Binding Source={StaticResource XMLExport}}" >XML</Button>
             </StackPanel>
         </GroupBox>
     </Grid>

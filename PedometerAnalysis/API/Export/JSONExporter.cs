@@ -1,14 +1,23 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Windows;
 namespace PedometerAnalysis.API.Export;
 internal class JSONExporter : IExport
 {
-    public void Export(string path, IEnumerable<UserInfo> infos)
+    public async void Export(string path, IEnumerable<UserInfo> infos)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var json = JsonConvert.SerializeObject(infos, Formatting.Indented);
+            await System.IO.File.WriteAllTextAsync(path, json);
+            MessageBox.Show("Export successful", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        
     }
 }
