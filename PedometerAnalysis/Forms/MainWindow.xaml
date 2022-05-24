@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         xmlns:local="clr-namespace:PedometerAnalysis.API"
         xmlns:local2="clr-namespace:PedometerAnalysis.API.Export"
         mc:Ignorable="d"
-        xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
         Title="MainWindow" Height="720" Width="1280">
     <Window.Resources>
         <Style TargetType="DataGrid">
@@ -56,44 +56,7 @@
                     <i:InvokeCommandAction Command="{Binding SelectionChangedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
-            <!--<DataGrid.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="0.8*" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding User}" />
-                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Average}" />
-                        <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Max}" />
-                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Min}" />
-                    </Grid>
-                </DataTemplate>
-            </DataGrid.ItemTemplate>-->
-            <!--<ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Margin="5">
-                        <TextBlock FontSize="18" Text="{Binding User}" />
-                        <TextBlock Text="{Binding Average}" />
-                        <TextBlock Text="{Binding Max}" />
-                        <TextBlock Text="{Binding Min}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>-->
         </DataGrid>
-        <!--<StackPanel Grid.Row="0" Grid.Column="1">
-            <TextBlock Text="Выбранный элемент"  />
-            <TextBlock Text="Модель" />
-            <TextBox Text="{Binding User}" />
-            <TextBlock Text="Производитель" />
-            <TextBox Text="{Binding Rank}" />
-            <TextBlock Text="Цена" />
-            <TextBox Text="{Binding Average}" />
-        </StackPanel>-->
         <GroupBox Grid.Column="1" Width="auto" Height="auto" Grid.Row="1" BorderBrush="Aqua" BorderThickness="1">
             <StackPanel>
                 <Button x:Name="openfilebutton" Height="20" Width="100"  Command="{Binding Path=OpenFileCommand}" CommandParameter="null" ></Button>

@@ -9,47 +9,24 @@ using System.Threading.Tasks;
 namespace PedometerAnalysis.API;
 internal static class Chart
 {
-    public static PlotModel GrapthMethod(PlotModel model, UserInfo selectedUser)
+    public static void UpdateChart(PlotModel model, UserInfo selectedUser, LineSeries lineSeries, ScatterSeries scatterSeries)
     {
         if (selectedUser == null)
-            return null;
+            return;
         if (model == null)
-            return null;
-        model.Series.Clear();
-        var temp = new PlotModel
-        {
-            Title = "Pedometer",
-            Subtitle = "using OxyPlot"
-        };
-        var series1 = new LineSeries
-        {
-            Title = "Series1",
-            Color = OxyColors.Red,
-            StrokeThickness = 2
-        };
-
+            return;
+        lineSeries.Points.Clear();
+        scatterSeries.Points.Clear();
         for (int i = 0; i < selectedUser.Steps.Length; i++)
         {
-            series1.Points.Add(new DataPoint(i + 1, selectedUser.Steps[i]));
+            lineSeries.Points.Add(new DataPoint(i + 1, selectedUser.Steps[i]));
+
+            if (selectedUser.Steps[i] == selectedUser.Min ||
+                selectedUser.Steps[i] == selectedUser.Max)
+            {
+                scatterSeries.Points.Add(new ScatterPoint(i + 1, selectedUser.Steps[i]));
+            }
         }
-        var series2 = new LineSeries
-        {
-            Title = "Series2",
-            Color = OxyColors.Blue,
-            StrokeThickness = 3
-        };
-
-        //int Element = selectedUser.Steps.Min();
-        //int Index = selectedUser.Steps.Where(c => c == Element).First();
-        //series2.Points.Add(new DataPoint(Index, Element));
-
-        //Element = selectedUser.Steps.Max();
-        //Index = selectedUser.Steps.Where(c => c == Element).First();
-        //series2.Points.Add(new DataPoint(Index, Element));
-
-        temp.Series.Add(series1);
-        //temp.Series.Add(series2);
         model.InvalidatePlot(true);
-        return temp;
     }
 }

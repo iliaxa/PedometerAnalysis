@@ -1,15 +1,12 @@
-﻿using OxyPlot;
-using OxyPlot.Series;
-using PedometerAnalysis.API.Extensions;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
+﻿using System;
 using System.Linq;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Data;
-using System.Windows.Media;
+using OxyPlot;
+using OxyPlot.Series;
 using PedometerAnalysis.API.Export;
+using PedometerAnalysis.API.Extensions;
 namespace PedometerAnalysis.API;
 internal class ApplicationViewModel : INotifyPropertyChanged
 {
@@ -19,12 +16,21 @@ internal class ApplicationViewModel : INotifyPropertyChanged
     private RelayCommand selectionChangedCommand;
     private RelayCommand openFileCommand;
     private RelayCommand exportCommand;
+    private void FillGrid()
+    {
+        if (Users == null)
+        {
+            return;
+        }
+        for (int i = 0; i < Users.Count; i++)
+        {
+            Users[i].Average = Math.Round(Users[i].Steps.Average());
+            Users[i].Min = Users[i].Steps.Min();
+            Users[i].Max = Users[i].Steps.Max();
+        }
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
-    public void OnPropertyChanged([CallerMemberName] string prop = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-    }
     public ObservableCollection<UserInfo> Users { get; set; }
     public UserInfo SelectedUser
     {
@@ -35,40 +41,13 @@ internal class ApplicationViewModel : INotifyPropertyChanged
             OnPropertyChanged("SelectedUser");
         }
     }
-    public ApplicationViewModel()
-    {
-        Users = new ObservableCollection<UserInfo>();
-        this.MyModel = new PlotModel()
-        {
-            Title = "Pedometer",
-            Subtitle = "using OxyPlot"
-        };
-        this.lineSeries = new LineSeries
-        {
-            Title = "Series1",
-            Color = OxyColors.Red,
-            StrokeThickness = 2
-        };
-        this.scatterSeries = new ScatterSeries
-        {
-            Title = "Series2",
-            MarkerFill = OxyColors.Blue,
-            MarkerSize = 5,
-            MarkerType = MarkerType.Circle
-        };
-        MyModel.Series.Add(this.lineSeries);
-        MyModel.Series.Add(this.scatterSeries);
-    }
-
-
-
     public RelayCommand SelectionChangedCommand
     {
         get
         {
             return selectionChangedCommand ??= new RelayCommand(obj =>
                 {
-                    UpdateChart();
+                    Chart.UpdateChart(MyModel, SelectedUser, lineSeries, scatterSeries);
                 });
         }
     }
@@ -88,8 +67,8 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                         Users.Clear();
                         Users.AddRange(JSONParser.Parse(openFileDialog.FileNames));
                         SelectedUser = Users.First();
-                        FillGrid();
-                        UpdateChart();
+                        FillGrid(); 
+                        Chart.UpdateChart(MyModel, SelectedUser, lineSeries, scatterSeries);
                     }
                 });
         }
@@ -121,43 +100,33 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                 });
         }
     }
-
-
-    private void FillGrid()
-    {
-        if (Users == null)
-        {
-            return;
-        }
-        for (int i = 0; i < Users.Count; i++)
-        {
-            Users[i].Average = Math.Round(Users[i].Steps.Average());
-            Users[i].Min = Users[i].Steps.Min();
-            Users[i].Max = Users[i].Steps.Max();
-        }
-    }
-
     public PlotModel MyModel { get; private set; }
-
-    public void UpdateChart()
+    public ApplicationViewModel()
     {
-        if (selectedUser == null)
-            return;
-        if (MyModel == null)
-            return;
-        lineSeries.Points.Clear();
-        scatterSeries.Points.Clear();
-        for (int i = 0; i < selectedUser.Steps.Length; i++)
+        Users = new ObservableCollection<UserInfo>();
+        this.MyModel = new PlotModel()
         {
-            lineSeries.Points.Add(new DataPoint(i + 1, selectedUser.Steps[i]));
-
-            if (selectedUser.Steps[i] == selectedUser.Min ||
-                selectedUser.Steps[i] == selectedUser.Max)
-            {
-                scatterSeries.Points.Add(new ScatterPoint(i + 1, selectedUser.Steps[i]));
-            }
-        }
-        MyModel.InvalidatePlot(true);
+            Title = "Pedometer",
+            Subtitle = "using OxyPlot"
+        };
+        this.lineSeries = new LineSeries
+        {
+            Title = "Series1",
+            Color = OxyColors.Red,
+            StrokeThickness = 2
+        };
+        this.scatterSeries = new ScatterSeries
+        {
+            Title = "Series2",
+            MarkerFill = OxyColors.Blue,
+            MarkerSize = 5,
+            MarkerType = MarkerType.Circle
+        };
+        MyModel.Series.Add(this.lineSeries);
+        MyModel.Series.Add(this.scatterSeries);
     }
-
+    public void OnPropertyChanged([CallerMemberName] string prop = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+    }
 }
