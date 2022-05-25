@@ -13,9 +13,10 @@ internal class CSVExporter : IExport
         try
         {
             await File.WriteAllTextAsync(
-           path,
-           string.Join(Environment.NewLine, infos.Select(info => $"{info.User},{info.Rank},{info.Status},{info.Average},{info.Min},{info.Max}")),
-           Encoding.UTF8);
+                   path,
+                   "User Rank Status AverageSteps Minimal Maximum \n" + string.Join(Environment.NewLine, infos.Select(info => $"{info.User},{info.Rank},{info.Status},{info.Average},{info.Min},{info.Max}")),
+                   Encoding.UTF8
+                );
             MessageBox.Show("Export successful", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)

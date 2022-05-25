@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+using PedometerAnalysis.API.Extensions;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using PedometerAnalysis.API.Extensions;
-using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace PedometerAnalysis.API;
 internal class JSONParser
@@ -17,28 +18,36 @@ internal class JSONParser
     }
     public static ObservableCollection<UserInfo> Parse(string[] files)
     {
-        List<RootObject>? parsedFiles = new List<RootObject>();
-        for (int i = 0; i < files.Length; i++)
+        var resultCollection = new ObservableCollection<UserInfo>();
+        try
         {
-            using (StreamReader r = new StreamReader(files[i]))
+            List<RootObject>? parsedFiles = new List<RootObject>();
+            for (int i = 0; i < files.Length; i++)
             {
-                string json = r.ReadToEnd();
-                var rootObjects = JsonConvert.DeserializeObject<IEnumerable<RootObject>>(json);
-                if (rootObjects == null)
+                using (StreamReader r = new StreamReader(files[i]))
                 {
-                    throw new System.Exception($"Could not parse {files[i]} file into JSON");
+                    string json = r.ReadToEnd();
+                    var rootObjects = JsonConvert.DeserializeObject<IEnumerable<RootObject>>(json);
+                    if (rootObjects == null || rootObjects.All(c=>c.Steps == 0))
+                    {
+                        throw new System.Exception("Error parsing file: " + files[i]);
+                    }
+                    parsedFiles.AddRange(rootObjects);
                 }
-                parsedFiles.AddRange(rootObjects);
             }
-        }
-        var resultCollection = parsedFiles.GroupBy(x => x.User)
-            .Select(c => new UserInfo
+            resultCollection = parsedFiles.GroupBy(x => x.User)
+                .Select(c => new UserInfo
                 {
                     User = c.Key,
                     Rank = c.First().Rank,
                     Status = c.First().Status,
                     Steps = c.Select(z => z.Steps).ToArray()
                 }).ToObservableCollection();
+        }
+        catch (System.Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
         return resultCollection;
     }
 

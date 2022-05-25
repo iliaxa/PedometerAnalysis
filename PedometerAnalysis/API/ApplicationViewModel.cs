@@ -1,4 +1,5 @@
 ﻿using OxyPlot;
+using OxyPlot.Axes;
 using OxyPlot.Series;
 using PedometerAnalysis.API.Export;
 using PedometerAnalysis.API.Extensions;
@@ -67,7 +68,6 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                     {
                         Users.Clear();
                         Users.AddRange(JSONParser.Parse(openFileDialog.FileNames));
-                        SelectedUser = Users.First();
                         FillGrid();
                         Chart.UpdateChart(MyModel, SelectedUser, lineSeries, scatterSeries);
                     }
@@ -85,9 +85,9 @@ internal class ApplicationViewModel : INotifyPropertyChanged
                     {
                         InitialDirectory = AppDomain.CurrentDomain.BaseDirectory
                     };
-                    if (obj is JSONExporter)  { exporter = obj as JSONExporter; saveFileDialog.Filter = "JSON files (*.json)"; }
-                    else if (obj is CSVExporter) { exporter = obj as CSVExporter; saveFileDialog.Filter = "CSV files (*.csv)"; }
-                    else if (obj is XMLExporter) { exporter = obj as XMLExporter; saveFileDialog.Filter = "XML files (*.xml)"; }
+                    if (obj is JSONExporter)  { exporter = obj as JSONExporter; saveFileDialog.Filter = "JSON files | *.json"; }
+                    else if (obj is CSVExporter) { exporter = obj as CSVExporter; saveFileDialog.Filter = "CSV files | *.csv"; }
+                    else if (obj is XMLExporter) { exporter = obj as XMLExporter; saveFileDialog.Filter = "XML files | *.xml"; }
                     else { return; }
                     ExportSevice sevice = new ExportSevice(exporter);
                     if (saveFileDialog.ShowDialog() == true)
@@ -103,18 +103,18 @@ internal class ApplicationViewModel : INotifyPropertyChanged
         Users = new ObservableCollection<UserInfo>();
         this.MyModel = new PlotModel()
         {
-            Title = "Pedometer",
-            Subtitle = "using OxyPlot"
+            Title = "Steps Analysis"
         };
+        MyModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "Day", FontSize = 14 });
+        MyModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Steps", FontSize = 14 });
         this.lineSeries = new LineSeries
         {
-            Title = "Series1",
             Color = OxyColors.Red,
-            StrokeThickness = 2
+            StrokeThickness = 2,
+            FontSize = 14
         };
         this.scatterSeries = new ScatterSeries
         {
-            Title = "Series2",
             MarkerFill = OxyColors.Blue,
             MarkerSize = 5,
             MarkerType = MarkerType.Circle
